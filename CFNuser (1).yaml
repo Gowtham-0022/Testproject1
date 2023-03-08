@@ -1,0 +1,81 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: SRE-SYSDIG-TEST
+Parameters:
+  UserName:
+    Description: Name of the User 
+    Type: String
+Resources:
+  IAMUser:
+    Type: 'AWS::IAM::User'
+    Properties:
+       UserName: !Ref UserName
+  AccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref 'IAMUser' 
+  AdministrationRole:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub '${AWS::StackName}-SaaSPolicy'
+      Users:
+        - !Ref IAMUser
+      PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+                - Effect: Allow
+                  Resource: '*'
+                  Action:
+                    - eks:*
+                    - ssm:PutParameter
+                    - ssm:LabelParameterVersion
+                    - ssm:DeleteParameter
+                    - ssm:DescribeParameters
+                    - ssm:GetParameterHistory
+                    - ssm:DescribeDocumentParamers
+                    - ssm:GetParametersByPath
+                    - ssm:GetParameters
+                    - ssm:GetParameter
+                    - ssm:DeleteParameter
+                    - ecr:*
+                    - ec2:*
+                    - elasticloadbalancing:*
+                    - cloudwatch:*
+                    - autoscaling:*
+                    - iam:CreateServiceLinkedRole
+                    - iam:*
+                    - iam:ChangePassword
+                    - iam:GetAccountPasswordPolicy
+                    - organizations:DescribeAccount
+                    - organizations:DescribeOrganization
+                    - organizations:DescribeOrganizationalUnit
+                    - organizations:DescribePolicy
+                    - organizations:ListChildren
+                    - organizations:ListParents
+                    - organizations:ListPoliciesForTarget
+                    - organizations:ListRoots
+                    - organizations:ListPolicies
+                    - organizations:ListTargetsForPolicy
+                    - tag:getResources
+                    - tag:getTagKeys
+                    - tag:getTagValues
+                    - tag:TagResources
+                    - tag:UntagResources
+                    - resource-groups:*
+                    - cloudformation:DescribeStacks
+                    - cloudformation:ListStackResources
+                    - s3:*
+                    - s3-object-lambda:*
+                    - cloudformation:*
+                    - kms:*
+                    - sns:*
+                    - secretsmanager:*
+Outputs:
+  IAMUserName:
+     Value: !Ref UserName
+     Description: IAM User Name 
+  AccessKey:
+    Value: !Ref 'AccessKey'
+    Description: AWSAccessKeyId of new user
+  SecretKey:
+    Value: !GetAtt [AccessKey, SecretAccessKey]
+    Description: AWSSecretAccessKey of new user
