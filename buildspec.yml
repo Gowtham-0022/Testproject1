@@ -1,6 +1,9 @@
 version: 0.2
+
 phases:
-  build:
-    commands:
-      - cd $CODEBUILD_SRC_DIR
-      - aws s3 sync . s3://github-cicd-demo-gat --delete
+    build:
+          commands:
+                  - echo "CodeBuild is running Experiment 1"
+                  - echo "Deploying to S3 from Codebuild"
+                  - aws s3 sync . s3://github-cicd-demo-gat --delete
+
